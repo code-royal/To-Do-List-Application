@@ -10,6 +10,10 @@ public class TaskManager {
         tasks = new ArrayList<>();
     }
 
+    public ArrayList<Task> getTasks(){
+        return tasks;
+    }
+    
     // returns the index of element from the ArrayList on the basis of taskName
     public int getIndex(String task_name)
     {

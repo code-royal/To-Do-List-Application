@@ -1,6 +1,6 @@
 import javax.swing.*;
-
 import java.awt.*;
+import java.io.*;
 
 public class ToDoAppGUI extends JFrame{
     private  JTextArea display;
@@ -236,10 +236,42 @@ public class ToDoAppGUI extends JFrame{
                 display.setText("");
             }
             case "Save to File" -> {
-
+                File file = new File("tasks.txt");
+                if(taskManager.noTaskAdded()){
+                    JOptionPane.showMessageDialog(this,"Nothing to export");
+                }
+                else{
+                    try(FileWriter writer = new FileWriter(file)){
+                        for(Task t : taskManager.getTasks()){
+                            writer.write(t.getTaskName()+","+t.getTaskPriority()+","+t.getTaskStatus()+"\n");
+                        }
+                        JOptionPane.showMessageDialog(this,"Saved successfully.");
+                    }
+                    catch (IOException e){
+                        JOptionPane.showMessageDialog(this,"File Not Found");
+                    }
+                }
             }
             case "Load from File" -> {
-
+                taskManager.getTasks().clear();
+                try(BufferedReader br = new BufferedReader(new FileReader("tasks.txt"))){
+                    String line;
+                    while((line = br.readLine()) != null){
+                        String[] d  = line.split(",");
+                        taskManager.getTasks().add(new Task(d[0],d[1],d[2]));
+                    }
+                    for(Task t : taskManager.getTasks()){
+                        int index = taskManager.getIndex(t.getTaskName());
+                        display.append(index + "  " + t.toString() + "\n");
+                    }
+                    JOptionPane.showMessageDialog(this,"Loaded successfully.");
+                }
+                catch(FileNotFoundException e){
+                    JOptionPane.showMessageDialog(this, "File not Found");
+                }
+                catch(Exception e){
+                    JOptionPane.showMessageDialog(this, "Nothing to load.");
+                }
             }
         }
     }
@@ -248,7 +280,7 @@ public class ToDoAppGUI extends JFrame{
     public void addTask(){
         String name = titleField.getText().trim();
 
-        if(name == null || name.isEmpty()){
+        if(name.isEmpty()){
             throw new IllegalArgumentException("Task Name cannot be empty.");
         }
 
@@ -267,7 +299,7 @@ public class ToDoAppGUI extends JFrame{
     public void updateStatus(){
         String task_name = searchField.getText().trim();
 
-        if(task_name == null || task_name.isEmpty()){
+        if(task_name.isEmpty()){
             throw new IllegalArgumentException("Task Name cannot be empty.");
         }
 
@@ -285,7 +317,7 @@ public class ToDoAppGUI extends JFrame{
     public void searchTask(){
         String task_name = searchField.getText().trim();
 
-        if(task_name == null || task_name.isEmpty()){
+        if(task_name.isEmpty()){
             throw new IllegalArgumentException("Task Name cannot be empty.");
         }
 
@@ -298,7 +330,7 @@ public class ToDoAppGUI extends JFrame{
     public void removeTask(){
         String task_name = searchField.getText().trim();
 
-        if(task_name == null || task_name.isEmpty()){
+        if(task_name.isEmpty()){
             throw new IllegalArgumentException("Task Name cannot be empty.");
         }
 
@@ -318,7 +350,7 @@ public class ToDoAppGUI extends JFrame{
 
     // methods to display all tasks details refering to the ArrayList in TaskManager Class
     public void displayAll(){
-        if(taskManager.noTaskAdded() == true){
+        if(taskManager.noTaskAdded()){
             throw new IllegalArgumentException("No tasks found.");
         }
         String result = taskManager.displayAllTasks();
