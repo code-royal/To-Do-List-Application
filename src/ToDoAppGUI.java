@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.util.Objects;
 
 public class ToDoAppGUI extends JFrame{
     private  JTextArea display;
@@ -284,8 +285,8 @@ public class ToDoAppGUI extends JFrame{
             throw new IllegalArgumentException("Task Name cannot be empty.");
         }
 
-        String priority = prioritySelection.getSelectedItem().toString().trim();
-        String status = statusSelection.getSelectedItem().toString().trim();
+        String priority = Objects.requireNonNull(prioritySelection.getSelectedItem()).toString().trim();
+        String status = Objects.requireNonNull(statusSelection.getSelectedItem()).toString().trim();
 
         String result = taskManager.addTask(name, priority, status);
         JOptionPane.showMessageDialog(this,result);
@@ -303,7 +304,7 @@ public class ToDoAppGUI extends JFrame{
             throw new IllegalArgumentException("Task Name cannot be empty.");
         }
 
-        String new_status = statusUpdateSelection.getSelectedItem().toString().trim();
+        String new_status = Objects.requireNonNull(statusUpdateSelection.getSelectedItem()).toString().trim();
 
         String result = taskManager.updateStatus(task_name, new_status);
         JOptionPane.showMessageDialog(this, result);
